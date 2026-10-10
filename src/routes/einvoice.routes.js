@@ -47,15 +47,13 @@ router.post('/submit', authenticate, async (req, res) => {
       });
     }
 
-    // BUG G: No duplicate submission check
-    // Should prevent submitting the same invoice twice
-    // Missing validation below:
-    
-    // if (invoice.einvoice_status === 'submitted' || invoice.einvoice_status === 'accepted') {
-    //   return res.status(409).json({ 
-    //     error: 'Invoice already submitted to tax authority' 
-    //   });
-    // }
+    // FIXED Bug G: Prevent duplicate e-invoice submissions
+    // An invoice can only be submitted once (or re-submitted after rejection)
+    if (invoice.einvoice_status === 'submitted' || invoice.einvoice_status === 'accepted') {
+      return res.status(409).json({ 
+        error: 'Invoice already submitted to tax authority' 
+      });
+    }
 
     // Simulate tax authority submission
     const submission_id = `SUB-${uuidv4()}`;
